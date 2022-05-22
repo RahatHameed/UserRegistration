@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CustomerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [CustomerController::class,'index']);
+
+Route::get('customer/create-step-one', [CustomerController::class,'createStepOne'])->name('createStepOne');
+
+Route::post('customer/create-step-one', [CustomerController::class,'postStepOne'])->name('postStepOne');
+
+Route::get('customer/create-step-two', [CustomerController::class,'createStepTwo'])->name('createStepTwo');
+
+Route::post('customer/create-step-two', [CustomerController::class,'postStepTwo'])->name('postStepTwo');
+
+Route::get('customer/create-step-three', [CustomerController::class,'createStepThree'])->name('createStepThree');
+
+Route::post('customer/create-step-three', [CustomerController::class,'postStepThree'])->name('postStepThree');
