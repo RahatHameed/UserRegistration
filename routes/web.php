@@ -27,4 +27,4 @@ Route::get('customer/create-step-three', [CustomerController::class,'createStepT
 
 Route::post('customer/create-step-three', [CustomerController::class,'postStepThree'])->name('postStepThree');
 
-Route::get('customer/create-step-four', [CustomerController::class,'createStepFour'])->name('createStepFour');
+Route::get('customer/wunder-fleet-api/{customerId}', [CustomerController::class,'callWunderFleetApi'])->name('callWunderFleetApi');

@@ -4,19 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Services\WunderFleet\Service;
 
 class CustomerController extends Controller
 {
-
 
     const STRING_VALIDATION = 'required|string';
     const INTEGER_VALIDATION = 'required|integer';
     const OPT_STRING_VALIDATION = 'nullable|string';
     const OPT_INTEGER_VALIDATION = 'nullable|integer';
 
+    /**
+     * @var Service
+     */
+    private $wunderFleetService;    
     private $customer;
-    public function __construct() {
+
+    public function __construct(Service $wunderFleetService) {
         $this->customer = new Customer();
+        $this->wunderFleetService = $wunderFleetService;
     }
 
     public function index(Request $request)
@@ -132,7 +138,6 @@ class CustomerController extends Controller
         ]);
   
         if(empty($request->session()->get('customer'))){
-
             $this->customer->fill($validatedData);
             $request->session()->put('customer', $this->customer);
         }else{
@@ -141,11 +146,37 @@ class CustomerController extends Controller
             $request->session()->put('customer', $this->customer);
         }
 
-        $this->customer->save();
-        $customerId = $this->customer->id;
-        $this->customer->session()->forget('customer'); 
-        
-        return $customerId;
+        //$this->customer->save();
+        //$customerId = $this->customer->id;
+        //$request->session()->forget('customer'); 
+        $customerId = 2;
+        return redirect()->route('callWunderFleetApi',['customerId' => $customerId]);
 
-    }     
+    }
+    
+    public function callWunderFleetApi(Request $request, $customerId){
+
+        try {
+            $this->customer = $this->customer->find($customerId);
+            if($this->customer){
+                $params = [
+                    'customerId' => $this->customer->id,
+                    'iban' => $this->customer->iban,
+                    'owner'=> $this->customer->owner
+                    ];
+                $response = $this->wunderFleetService->getPaymentDataId($params);
+                $response['cached']=false;
+                Cache::put($customerId, $response);
+            }else{
+                $response['message'] = 'Something went wrong, please try again later.';
+                $response['status'] = 'error';
+            }
+
+        } catch(Exception $exception) {
+            $response['message'] = $exception->getMessage();
+            $response['status'] = 'error';
+        }
+        return view('customers/success-page', $response);    
+    }
+  
 }
