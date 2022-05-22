@@ -43,11 +43,7 @@ class CustomerController extends Controller
                 
                 case '3':
                     return redirect()->route('createStepThree');
-                break;  
-                
-                case '4':
-                    return redirect()->route('createStepFour');
-                break;                    
+                break;                                 
 
                 default:
                     return redirect()->route('createStepOne');

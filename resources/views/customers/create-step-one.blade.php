@@ -31,7 +31,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="telephone">Telephone<span style="color:red">*</span>:</label>
+                                <label for="telephone">Telephone:</label>
                                 <input type="text"  value="{{  old('telephone', $customer->telephone) }}" class="form-control" id="telephone" name="telephone"/>
                             </div>                            
                           
