@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use Illuminate\Support\Facades\Cache;
 use App\Services\WunderFleet\Service;
 
 class CustomerController extends Controller
@@ -157,19 +158,24 @@ class CustomerController extends Controller
     public function callWunderFleetApi(Request $request, $customerId){
 
         try {
-            $this->customer = $this->customer->find($customerId);
-            if($this->customer){
-                $params = [
-                    'customerId' => $this->customer->id,
-                    'iban' => $this->customer->iban,
-                    'owner'=> $this->customer->owner
-                    ];
-                $response = $this->wunderFleetService->getPaymentDataId($params);
-                $response['cached']=false;
-                Cache::put($customerId, $response);
+            if ($this->isCached($customerId)) {
+                $response = Cache::get($customerId);
+                $response['cached']=true;
             }else{
-                $response['message'] = 'Something went wrong, please try again later.';
-                $response['status'] = 'error';
+                $this->customer = $this->customer->find($customerId);
+                if($this->customer){
+                    $params = [
+                        'customerId' => $this->customer->id,
+                        'iban' => $this->customer->iban,
+                        'owner'=> $this->customer->owner
+                     ];
+                    $response = $this->wunderFleetService->getPaymentDataId($params);
+                    $response['cached']=false;
+                    Cache::put($customerId, $response);
+                }else{
+                    $response['message'] = 'Something went wrong, please try again later.';
+                    $response['status'] = 'error';
+                }
             }
 
         } catch(Exception $exception) {
@@ -178,5 +184,13 @@ class CustomerController extends Controller
         }
         return view('customers/success-page', $response);    
     }
-  
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function isCached(string $key): bool
+    {
+        return Cache::has(strtolower($key));
+    }    
 }
