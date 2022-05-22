@@ -113,4 +113,39 @@ class CustomerController extends Controller
         }
         return redirect()->route('createStepThree');
     }     
+
+    public function createStepThree(Request $request)
+    {
+        $customer = $this->customer;
+        if(!empty($request->session()->get('customer'))){
+            $customer = $request->session()->get('customer');
+        }
+        $request->session()->put('lastStep', 3);
+        return view('customers/create-step-three',compact('customer'));
+    }    
+
+    public function postStepThree(Request $request)
+    {
+        $validatedData = $request->validate([
+            'owner' => self::STRING_VALIDATION,
+            'iban' => self::STRING_VALIDATION,
+        ]);
+  
+        if(empty($request->session()->get('customer'))){
+
+            $this->customer->fill($validatedData);
+            $request->session()->put('customer', $this->customer);
+        }else{
+            $this->customer = $request->session()->get('customer');
+            $this->customer->fill($validatedData);
+            $request->session()->put('customer', $this->customer);
+        }
+
+        $this->customer->save();
+        $customerId = $this->customer->id;
+        $this->customer->session()->forget('customer'); 
+        
+        return $customerId;
+
+    }     
 }
