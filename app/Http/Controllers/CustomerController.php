@@ -171,6 +171,12 @@ class CustomerController extends Controller
                     $response = $this->wunderFleetService->getPaymentDataId($params);
                     $response['cached']=false;
                     Cache::put($customerId, $response);
+
+                    // ----- Update paymentDataId with customer -------//
+                    if($response['data']) {
+                        $this->customer->paymentDataId = $response['data'];
+                        $this->customer->save();
+                    } 
                 }else{
                     $response['message'] = 'Something went wrong, please try again later.';
                     $response['status'] = 'error';
