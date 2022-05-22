@@ -22,16 +22,16 @@
                             @endif
   
                             <div class="form-group">
-                                <label for="firstName">First Name*:</label>
+                                <label for="firstName">First Name<span style="color:red">*</span>:</label>
                                 <input type="text" value="{{ old('firstName', $customer->firstName) }}" class="form-control" id="firstName"  name="firstName">
                             </div>
                             <div class="form-group">
-                                <label for="lastName">Last Name*:</label>
+                                <label for="lastName">Last Name<span style="color:red">*</span>:</label>
                                 <input type="text"  value="{{ old('lastName', $customer->lastName) }}" class="form-control" id="lastName" name="lastName"/>
                             </div>
 
                             <div class="form-group">
-                                <label for="telephone">Telephone*:</label>
+                                <label for="telephone">Telephone<span style="color:red">*</span>:</label>
                                 <input type="text"  value="{{  old('telephone', $customer->telephone) }}" class="form-control" id="telephone" name="telephone"/>
                             </div>                            
                           
