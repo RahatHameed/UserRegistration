@@ -26,3 +26,5 @@ Route::post('customer/create-step-two', [CustomerController::class,'postStepTwo'
 Route::get('customer/create-step-three', [CustomerController::class,'createStepThree'])->name('createStepThree');
 
 Route::post('customer/create-step-three', [CustomerController::class,'postStepThree'])->name('postStepThree');
+
+Route::get('customer/create-step-four', [CustomerController::class,'createStepFour'])->name('createStepFour');
