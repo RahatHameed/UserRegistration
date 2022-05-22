@@ -147,10 +147,9 @@ class CustomerController extends Controller
             $request->session()->put('customer', $this->customer);
         }
 
-        //$this->customer->save();
-        //$customerId = $this->customer->id;
-        //$request->session()->forget('customer'); 
-        $customerId = 2;
+        $this->customer->save();
+        $customerId = $this->customer->id;
+        $request->session()->forget('customer'); 
         return redirect()->route('callWunderFleetApi',['customerId' => $customerId]);
 
     }
@@ -176,8 +175,8 @@ class CustomerController extends Controller
                     $response['message'] = 'Something went wrong, please try again later.';
                     $response['status'] = 'error';
                 }
+                $request->session()->put('lastStep', 1);
             }
-
         } catch(Exception $exception) {
             $response['message'] = $exception->getMessage();
             $response['status'] = 'error';
